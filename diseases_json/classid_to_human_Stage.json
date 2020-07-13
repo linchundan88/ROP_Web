@@ -1,0 +1,9 @@
+{
+    "diseases":[
+        {"NO":0,"NAME":"Non any stage of ROP"},
+        {"NO":1,"NAME":"Any stage of ROP"}
+    ]
+}
+
+
+

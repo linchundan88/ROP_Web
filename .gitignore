@@ -1,0 +1,7 @@
+.idea/*
+*.hdf5
+*.h5
+.gitignore
+__pycache__/
+my_module/__pycache__/
+static/

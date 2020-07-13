@@ -1,0 +1,34 @@
+
+
+URL_GRADABLE = 'http://localhost:5000'
+URL_LEFT_RIGHT = 'http://localhost:5001'
+URL_STAGE = 'http://localhost:5002'
+URL_HEMORRHAGE = 'http://localhost:5003'
+URL_POSTERIOR = 'http://localhost:5004'
+URL_PLUS_ONE_STAGE = 'http://localhost:5005'
+URL_PLUS_TWO_STAGES = 'http://localhost:5006'
+
+URL_BLOOD_VESSEL_SEG = 'http://localhost:5010'
+URL_DETECT_OPTIC_DISC = 'http://localhost:5011'
+
+URL_DEEPSHAP_STAGE = 'http://localhost:5100'
+URL_DEEPSHAP_HEMORRHAGE = 'http://localhost:5100'
+URL_DEEPSHAP_PLUS = 'http://localhost:5100'
+
+
+ENABLE_LEFT_RIGHT = False
+UNGRADABLE_RESHOOTING = False
+
+SHOW_OPTIC_DISC_MASK = True
+SHOW_BLOOD_VESSEL_SEG_POSTERIOR = True
+
+SHOW_BLOOD_VESSEL_SEG = True
+SHOW_OPTIC_DISC_SEG = True
+
+SHOW_DEEPSHAP_STAGE = False
+SHOW_DEEPSHAP_HEMORRHAGE = False
+SHOW_DEEPSHAP_PLUS = False
+
+BLEND_ORIGINAL_IMAGE = True
+
+PORT = 8888
