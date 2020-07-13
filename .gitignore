@@ -1,4 +1,4 @@
-.idea/*
+/.idea/*
 *.hdf5
 *.h5
 .gitignore
