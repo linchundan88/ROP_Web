@@ -44,10 +44,10 @@
             <td width="299" align="center">
                 {% if  predict_result['img_gradable'] == 0 %}
                     <span style="color: #302fff">Gradable</span>
-                    <br><br>(probability of gradable: {{ predict_result['img_gradable_0_prob'] }} %)
+                    <br><br>(probability of gradable: {{ predict_result['img_gradable_0_prob'] |my_round}} %)
                 {% elif predict_result['img_gradable'] == 1 %}
                     <span style="color: #FF0000;font-size:large">Ungradable</span>
-                    <br><br>(probability of ungradable: {{ predict_result['img_gradable_1_prob'] }} %)
+                    <br><br>(probability of ungradable: {{ predict_result['img_gradable_1_prob'] |my_round}} %)
                 {% endif %}
 
             </td>
@@ -67,7 +67,7 @@
 
     {% if  predict_result['img_gradable'] == 0 %}
         {% if 'img_left_right' in predict_result %}
-            {% if predict_result['img_left_right_0_prob'] > ipredict_result['mg_left_right_1_prob'] %}
+            {% if predict_result['img_left_right_0_prob'] > predict_result['mg_left_right_1_prob'] %}
                 {{ predict_result['img_left_right_0_name'] }}
             {% else %}
                 {{ predict_result['img_left_right_1_name'] }}
@@ -94,10 +94,10 @@
 
                     {% if  predict_result['img_stage'] == 0 %}
                         <td align="center"><span class="font3">No</span></td>
-                        <td align="center"><span class="font3">{{ predict_result['img_stage_1_prob'] }} %</span></td>
+                        <td align="center"><span class="font3">{{ predict_result['img_stage_1_prob'] |my_round}} %</span></td>
                     {% elif predict_result['img_stage'] == 1 %}
                         <td align="center"><span class="font1">Yes</span></td>
-                        <td align="center"><span class="font1">{{ predict_result['img_stage_1_prob'] }} %</span></td>
+                        <td align="center"><span class="font1">{{ predict_result['img_stage_1_prob'] |my_round}} %</span></td>
                     {% endif %}
 
                 {% if predict_result['img_stage'] == 1  %}
@@ -111,7 +111,6 @@
                 </tr>
             {% endif %}
 
-
             {% if 'img_hemorrhage' in predict_result %}
                 <tr>
                     <td align="center" class="font0">
@@ -119,11 +118,11 @@
                     </td>
                     {% if  predict_result['img_hemorrhage'] == 0 %}
                         <td align="center"><span class="font3">No</span></td>
-                        <td align="center"><span class="font3">{{ predict_result['img_hemorrhage_1_prob'] }} %</span></td>
+                        <td align="center"><span class="font3">{{ predict_result['img_hemorrhage_1_prob'] |my_round}} %</span></td>
 
                     {% elif predict_result['img_hemorrhage'] == 1 %}
                         <td align="center"><span class="font1">Yes</span></td>
-                        <td align="center"><span class="font1">{{ predict_result['img_hemorrhage_1_prob'] }} %</span></td>
+                        <td align="center"><span class="font1">{{ predict_result['img_hemorrhage_1_prob'] |my_round}} %</span></td>
 
                     {% endif %}
 
@@ -147,12 +146,12 @@
                     {% if  predict_result['img_posterior'] == 1 %}
 
                         <td align="center"><span class="font3">No</span></td>
-                        <td align="center"><span class="font3">{{ predict_result['img_posterior_0_prob'] }} %</span></td>
+                        <td align="center"><span class="font3">{{ predict_result['img_posterior_0_prob'] |my_round}} %</span></td>
 
                     {% elif predict_result['img_posterior'] == 0 %}
 
                         <td align="center"><span class="font1">Yes</span></td>
-                        <td align="center"><span class="font1">{{ predict_result['img_posterior_0_prob'] }} %</span></td>
+                        <td align="center"><span class="font1">{{ predict_result['img_posterior_0_prob'] |my_round}} %</span></td>
 
                     {% endif %}
                 </tr>
@@ -167,12 +166,12 @@
                     {% if  predict_result['img_plus'] == 0 %}
 
                         <td align="center"><span class="font3">No</span></td>
-                        <td align="center"><span class="font3">{{ predict_result['img_plus_1_prob'] }} %</span></td>
+                        <td align="center"><span class="font3">{{ predict_result['img_plus_1_prob'] |my_round}} %</span></td>
 
                     {% elif predict_result['img_plus'] == 1 %}
 
                         <td align="center"><span class="font1">Yes</span></td>
-                        <td align="center"><span class="font1">{{ predict_result['img_plus_1_prob'] }} %</span></td>
+                        <td align="center"><span class="font1">{{ predict_result['img_plus_1_prob'] |my_round}} %</span></td>
 
                     {% endif %}
 

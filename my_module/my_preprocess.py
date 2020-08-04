@@ -12,9 +12,6 @@ add_black_margin: add some black margin areas, so that img aug(random rotate cli
 
 my_preprocess: the main entrance of fundus images preprocess
 
-multi_crop: test time img aug,  multi crop
-
-get_fundus_border: only used in Fovea_center/DR0_4_inconsistent_400/crop_images
 
 '''
 
@@ -251,119 +248,6 @@ def do_preprocess(img_source, crop_size, img_file_dest=None, add_black_pixel_rat
         cv2.imwrite(img_file_dest, img1)
 
     return img1
-
-def multi_crop(img_source, gen_times=5, add_black=True):
-    if isinstance(img_source, str):
-        try:
-            image1 = cv2.imread(img_source)
-        except:
-            # Corrupt JPEG data1: 19 extraneous bytes before marker 0xc4
-            raise Exception("image file not found:" + img_source)
-    else:
-        image1 = img_source
-
-    if image1 is None:
-        raise Exception("image file error:" + img_source)
-
-    if add_black:
-        image1 = add_black(img_source)
-
-    list_image = [image1]
-
-    # sometimes = lambda aug: iaa.Sometimes(0.96, aug)
-    seq = iaa.Sequential([
-        iaa.Crop(px=(0, min(image1.shape[0], image1.shape[1]) // 20)),  # crop images from each side by 0 to 16px (randomly chosen)
-        # iaa.GaussianBlur(sigma=(0, 3.0)),  # blur images with a sigma of 0 to 3.0,
-        # iaa.Sharpen(alpha=(0, 1.0), lightness=(0.75, 1.5)),  # sharpen images
-        # sometimes(iaa.Crop(percent=(0, 0.1))),  # crop images by 0-10% of their height/width
-        # shuortcut for CropAndPad
-
-        # improve or worsen the contrast  If PCH is set to true, the process happens channel-wise with possibly different S.
-        # sometimes1(iaa.ContrastNormalization((0.9, 1.1), per_channel=0.5), ),
-        # change brightness of images (by -5 to 5 of original value)
-        # sometimes1(iaa.Add((-6, 6), per_channel=0.5),),
-        # sometimes(iaa.Affine(
-        #     # scale={"x": (0.92, 1.08), "y": (0.92, 1.08)},
-        #     # scale images to 80-120% of their size, individually per axis
-        #     # Translation Shifts the pixels of the image by the specified amounts in the x and y directions
-        #     translate_percent={"x": (-0.08, 0.08), "y": (-0.06, 0.06)},
-        #     # translate by -20 to +20 percent (per axis)
-        #     rotate=(0, 360),  # rotate by -45 to +45 degrees
-        #     # shear=(-16, 16),  # shear by -16 to +16 degrees
-        #     # order=[0, 1],  # use nearest neighbour or bilinear interpolation (fast)
-        #     # cval=(0, 255),  # if mode is constant, use a cval between 0 and 255
-        #     # mode=ia.ALL  # use any of scikit-image's warping modes (see 2nd image from the top for examples)
-        # )),
-    ])
-
-    img_results = []
-
-    for i in range(gen_times):
-        images_aug = seq.augment_images(list_image)
-        img_results.append(images_aug[0])
-
-    return img_results
-
-def get_fundus_border(img1, threthold1 = 5, threthold2 = 180, padding = 13):
-    if isinstance(img1, str):
-        img1 = cv2.imread(img1)
-
-    if img1.ndim == 2:
-        img1 = np.expand_dims(img1, axis=-1)
-
-    (found_circle, x, y, r) = detect_xyr(img1)
-    if found_circle:
-        left = x - r
-        left = max(0, left)
-        right = x + r
-        right = min(right, img1.shape[1])
-        bottom = y - r
-        bottom = min(bottom, img1.shape[0])
-        bottom = max(0, bottom)
-        top = y + r
-
-        return bottom, top, left, right
-
-    width, height = (img1.shape[1], img1.shape[0])
-
-    (left, bottom) = (0, 0)
-    (right, top) = (img1.shape[1], img1.shape[0])
-
-    for i in range(width):
-        array1 = img1[:, i, :]
-        if np.sum(array1) > threthold1 * array1.shape[0] * array1.shape[1] and \
-                np.sum(array1) < threthold2 * array1.shape[0] * array1.shape[1]:
-            left = i
-            break
-    left = max(0, left - padding)  # 留一些空白
-
-    for i in range(width - 1, 0 - 1, -1):
-        array1 = img1[:, i, :]
-        if np.sum(array1) > threthold1 * array1.shape[0] * array1.shape[1] and \
-                np.sum(array1) < threthold2 * array1.shape[0] * array1.shape[1]:
-            right = i
-            break
-    right = min(width, right + padding)  # 留一些空白
-
-    for i in range(height):
-        array1 = img1[i, :, :]
-        if np.sum(array1) > threthold1 * array1.shape[0] * array1.shape[1] and \
-                np.sum(array1) < threthold2 * array1.shape[0] * array1.shape[1]:
-            bottom = i
-            break
-    bottom = max(0, bottom - padding)
-
-    for i in range(height - 1, 0 - 1, -1):
-        array1 = img1[i, :, :]
-        if np.sum(array1) > threthold1 * array1.shape[0] * array1.shape[1] and \
-                np.sum(array1) < threthold2 * array1.shape[0] * array1.shape[1]:
-            top = i
-            break
-
-    top = min(height, top + padding)
-
-
-    return  bottom, top, left, right
 
 
 # simple demo code

@@ -5,7 +5,6 @@ URL_LEFT_RIGHT = 'http://localhost:5001'
 URL_STAGE = 'http://localhost:5002'
 URL_HEMORRHAGE = 'http://localhost:5003'
 URL_POSTERIOR = 'http://localhost:5004'
-URL_PLUS_ONE_STAGE = 'http://localhost:5005'
 URL_PLUS_TWO_STAGES = 'http://localhost:5006'
 
 URL_BLOOD_VESSEL_SEG = 'http://localhost:5010'
@@ -25,10 +24,10 @@ SHOW_BLOOD_VESSEL_SEG_POSTERIOR = True
 SHOW_BLOOD_VESSEL_SEG = True
 SHOW_OPTIC_DISC_SEG = True
 
-SHOW_DEEPSHAP_STAGE = False
+SHOW_DEEPSHAP_STAGE = True
 SHOW_DEEPSHAP_HEMORRHAGE = False
 SHOW_DEEPSHAP_PLUS = False
 
 BLEND_ORIGINAL_IMAGE = True
 
-PORT = 8888
+PORT = 5888

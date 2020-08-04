@@ -7,15 +7,24 @@ pip install mysqlclient
 
 DB_TYPE = 'sqlite'  # mysql
 
-# import MySQLdb
-# def get_db_conn_mysql():
-#     db = MySQLdb.connect('localhost', "dlp", "dlp13502965818", "ROP", use_unicode=True, charset='utf8')
-#
-#     return db
 
 import os
 import sys
 import sqlite3
+
+'''
+import json
+import MySQLdb
+def get_db_conn():
+    json_file = os.path.join(os.path.abspath('.'), 'db_config.json')
+    data = json.load(json_file)
+
+    db = MySQLdb.connect(data['host'], data['username'], data['password'],
+                         data['database'], use_unicode=True, charset='utf8')
+
+    return db
+'''
+
 def get_db_conn():
     db_file = os.path.join(sys.path[0], 'database', 'rop.sqlite')
     conn = sqlite3.connect(db_file)

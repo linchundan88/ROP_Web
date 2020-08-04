@@ -3,9 +3,8 @@ import xmlrpc.client
 import json
 import shutil
 import cv2
-import my_config
-
 from my_module import my_preprocess
+import my_config
 
 def get_disease_name(no, class_type='Stage', lang='en'):
     if class_type == 'Gradable':
@@ -35,8 +34,8 @@ def get_disease_name(no, class_type='Stage', lang='en'):
             if data['diseases'][i]['NO'] == no:
                 return data['diseases'][i]['NAME']
 
-def predict_single_class(img_source, class_type='Stage', softmax_or_multilabels='softmax'):
-
+def predict_single_class(img_source, class_type='Stage',
+                         softmax_or_multilabels='softmax'):
     if class_type == 'Gradable':  # image quality
         SERVER_URL = my_config.URL_GRADABLE
     elif class_type == 'Left_Right':
@@ -48,8 +47,6 @@ def predict_single_class(img_source, class_type='Stage', softmax_or_multilabels=
         SERVER_URL = my_config.URL_HEMORRHAGE
     elif class_type == 'Posterior':
         SERVER_URL = my_config.URL_POSTERIOR
-    # elif class_type == 'Plus':  # Plus one stage
-    #     SERVER_URL = my_config.URL_PLUS_ONE_STAGE
     elif class_type == 'Plus':  # Plus two stages
         SERVER_URL = my_config.URL_PLUS_TWO_STAGES
 
@@ -61,7 +58,6 @@ def predict_single_class(img_source, class_type='Stage', softmax_or_multilabels=
             prob_list, pred_list, prob_total, pred_total, correct_model_no = proxy1.predict_multi_labels(
                 img_source)
         return prob_list, pred_list, prob_total, pred_total, correct_model_no
-
 
 def predict_blood_vessel_seg(img_source, preprocess=True):
     with xmlrpc.client.ServerProxy(my_config.URL_BLOOD_VESSEL_SEG) as proxy1:
@@ -98,7 +94,7 @@ def predict_all(file_img_source, str_uuid, baseDir, lang,
     predict_result['img_gradable'] = pred_total_gradable
     predict_result["img_gradable_0_name"] = get_disease_name(0, class_type='Gradable', lang=lang)
     predict_result["img_gradable_0_prob"] = round(prob_total_gradable[0], 3) * 100
-    predict_result["img_gradable_1_name"] = get_disease_name(0, class_type='Gradable', lang=lang)
+    predict_result["img_gradable_1_name"] = get_disease_name(1, class_type='Gradable', lang=lang)
     predict_result["img_gradable_1_prob"] = round(prob_total_gradable[1], 3) * 100
 
     if predict_result['img_gradable'] == 1: #image quality ungradable
@@ -107,9 +103,7 @@ def predict_all(file_img_source, str_uuid, baseDir, lang,
                 predict_result['total_results'] = 'Rephotograph'
             else:
                 predict_result['total_results'] = '诊断结果是:图片质量不可评级，建议重拍。'
-
             predict_result['recommended'] = predict_result['total_results']
-
             return predict_result
 
     if my_config.ENABLE_LEFT_RIGHT:
@@ -193,7 +187,7 @@ def predict_all(file_img_source, str_uuid, baseDir, lang,
         with xmlrpc.client.ServerProxy(my_config.URL_DEEPSHAP_STAGE) as proxy1:
             model_no = 0
             list_classes, list_images = proxy1.server_shap_deep_explainer(model_no,
-                    img_file_preprocessed_384, False, 1, my_config.BLEND_ORIGINAL_IMAGE)
+                    img_file_preprocessed_384, 1, my_config.BLEND_ORIGINAL_IMAGE)
 
             filename_heatmap = os.path.join(baseDir, 'static', 'imgs', str_uuid, 'Heatmap_deepshap_stage_1.jpg')
             shutil.copy(list_images[0], filename_heatmap)
@@ -203,7 +197,7 @@ def predict_all(file_img_source, str_uuid, baseDir, lang,
         with xmlrpc.client.ServerProxy(my_config.URL_DEEPSHAP_HEMORRHAGE) as proxy1:
             model_no = 1
             list_classes, list_images = proxy1.server_shap_deep_explainer(model_no,
-                    img_file_preprocessed_384, False, 1, my_config.BLEND_ORIGINAL_IMAGE)
+                    img_file_preprocessed_384, 1, my_config.BLEND_ORIGINAL_IMAGE)
 
             filename_heatmap = os.path.join(baseDir, 'static', 'imgs', str_uuid, 'Heatmap_deepshap_hemorrhage_1.jpg')
             shutil.copy(list_images[0], filename_heatmap)
@@ -213,27 +207,24 @@ def predict_all(file_img_source, str_uuid, baseDir, lang,
         with xmlrpc.client.ServerProxy(my_config.URL_DEEPSHAP_PLUS) as proxy1:
             model_no = 2
             list_classes, list_images = proxy1.server_shap_deep_explainer(model_no,
-                    img_file_preprocessed_384, False, 1, my_config.BLEND_ORIGINAL_IMAGE)
+                    img_file_preprocessed_384, 1, my_config.BLEND_ORIGINAL_IMAGE)
 
             filename_heatmap = os.path.join(baseDir, 'static', 'imgs', str_uuid, 'Heatmap_deepshap_plus_1.jpg')
             shutil.copy(list_images[0], filename_heatmap)
             predict_result["Heatmap_deepshap_plus"] = filename_heatmap.replace(baseDir, '')
 
-    #region disease name
+    #region disease name and referal results
     if lang == 'en':
         predict_result['total_results'] = ''
     else:
         predict_result['total_results'] = '建议 : '
 
-    if (predict_result['img_stage'] == 1 or predict_result['img_stage'] == 1) \
-        or (predict_result['img_hemorrhage'] == 1 or predict_result['img_hemorrhage'] == 1):
-
+    if (predict_result['img_stage'] == 1 or predict_result['img_hemorrhage'] == 1):
         referal = True
         if lang == 'en':
             predict_result['total_results'] += 'Referral-warranted'
         else:
             predict_result['total_results'] += '转诊'
-
     else:
         if ('img_plus' in predict_result) and (predict_result['img_plus'] == 1):
             referal = True
@@ -275,11 +266,6 @@ def predict_all(file_img_source, str_uuid, baseDir, lang,
 
         disease_name = disease_name[:-2]
         disease_name += ''
-        # if lang == 'en':
-        #     predict_result['total_results'] += '. '
-        # else:
-        #     predict_result['total_results'] += '。 '
-
         predict_result['detected'] = disease_name
 
     predict_result['recommended'] = predict_result['total_results']

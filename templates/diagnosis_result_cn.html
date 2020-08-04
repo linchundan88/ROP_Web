@@ -153,12 +153,10 @@
                     </td>
 
                     {% if  predict_result.img_posterior == 1 %}
-
                         <td align="center"><span class="font3">否</span></td>
                         <td align="center"><span class="font3">{{ predict_result.img_posterior_0_prob |my_round }} %</span></td>
 
                     {% elif predict_result.img_posterior == 0 %}
-
                         <td align="center"><span class="font1">是</span></td>
                         <td align="center"><span class="font1">{{ predict_result.img_posterior_0_prob |my_round }} %</span></td>
 
